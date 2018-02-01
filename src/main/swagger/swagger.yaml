@@ -1,0 +1,58 @@
+swagger: "2.0"
+info:
+  version: "1"
+  title: "Swagger Sample"
+  description: "Swagger Sample API for generating REST endpoints with Guice, Jersey and Jetty."
+  termsOfService: "https://github.com/mracsko/example-swagger-jetty"
+  license:
+    name: "Apache 2.0"
+host: "localhost"
+basePath: "/api"
+schemes:
+  - "http"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+paths:
+  /dummy:
+    get:
+      description: "Returns dummy objects"
+      operationId: "getDummy"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "A list pf dummy objects"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Dummy"
+    put:
+      description: "Put a dummy object"
+      operationId: "putDummy"
+      parameters:
+        - name: "dummy"
+          in: "body"
+          description: "Dummy object to put"
+          required: true
+          schema:
+            $ref: "#/definitions/Dummy"
+      responses:
+        "200":
+          description: "ok"
+definitions:
+  Dummy:
+    type: "object"
+    properties:
+      number:
+        type: "integer"
+        format: "int64"
+      string:
+        type: "string"
+      date:
+        type: "string"
+        format: "date"
+      datetime:
+        type: "string"
+        format: "date-time"
