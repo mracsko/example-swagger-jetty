@@ -32,7 +32,11 @@ dependencies {
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
     compile group: 'com.google.inject.extensions', name: 'guice-servlet', version: '4.1.0'
 
+    compile group: 'org.webjars', name: 'swagger-ui', version: '3.9.3'
+
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+
+    compile group: 'javax.activation', name: 'activation', version: '1.1.1'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
@@ -44,7 +48,6 @@ swaggerSources {
         inputFile = file('src/main/swagger/swagger.yaml')
         code {
             language = 'jaxrs'
-            //components = ['models', 'apis']
             additionalProperties = [
                     "apiPackage"  : "com.mracsko.example.rest.swagger.api",
                     "modelPackage": "com.mracsko.example.rest.swagger.model",

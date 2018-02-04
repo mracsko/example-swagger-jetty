@@ -8,13 +8,13 @@ import com.mracsko.example.rest.swagger.api.JacksonJsonProvider;
 import com.mracsko.example.rest.swagger.api.LocalDateProvider;
 import com.mracsko.example.rest.swagger.api.OffsetDateTimeProvider;
 import com.mracsko.example.rest.swagger.api.RFC3339DateFormat;
-import com.mracsko.example.rest.swagger.guice.jersey.resource.InstanceRegisteringApplication;
+import com.mracsko.example.rest.swagger.guice.jersey.module.util.SwaggerJerseyUtil;
+import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ResourceModule extends AbstractModule {
+
+  public static final SwaggerPaths PATHS = new SwaggerPaths("/dummy", "/api");
 
   @Override
   protected void configure() {
@@ -22,20 +22,22 @@ public class ResourceModule extends AbstractModule {
   }
 
   @Provides
-  public ServletContainer servletContainer(final DummyApi dummyApi) {
-    List<Object> resources = new ArrayList<>();
+  public ServletContainerWithSwaggerPaths servletContainerWithPath(final DummyApi dummyApi) {
+    ResourceConfig resourceConfig = new ResourceConfig();
+    resourceConfig.registerInstances(new JacksonJsonProvider());
+    resourceConfig.registerInstances(new LocalDateProvider());
+    resourceConfig.registerInstances(new OffsetDateTimeProvider());
+    resourceConfig.registerInstances(new RFC3339DateFormat());
+    resourceConfig.registerInstances(dummyApi);
 
-    resources.add(new JacksonJsonProvider());
-    resources.add(new LocalDateProvider());
-    resources.add(new OffsetDateTimeProvider());
-    resources.add(new RFC3339DateFormat());
-    resources.add(dummyApi);
+    SwaggerJerseyUtil.configureSwaggerForResourceConfig(resourceConfig, PATHS.getFullPath(), "Dummy example API", "1.0");
 
-    return new ServletContainer(new InstanceRegisteringApplication(resources));
+    return new ServletContainerWithSwaggerPaths(new ServletContainer(resourceConfig), PATHS);
   }
 
   @Provides
   public DummyApi dummyApi(final DummyApiService dummyApiService) {
     return new DummyApi(dummyApiService);
   }
+
 }
