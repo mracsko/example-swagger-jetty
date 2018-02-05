@@ -1,6 +1,8 @@
 plugins {
     id "org.hidetake.swagger.generator" version "2.9.0"
     id "java"
+    id "application"
+    //id "com.dorongold.task-tree" version "1.3"
 }
 
 group 'com.mracsko.examples'
@@ -12,8 +14,11 @@ repositories {
     mavenCentral()
 }
 
-
-// https://sites.google.com/a/athaydes.com/renato-athaydes/posts/jersey_guice_rest_api
+configurations {
+    checkerFrameworkAnnotatedJDK {
+        description = 'a copy of JDK classes with Checker Framework type qualifers inserted'
+    }
+}
 
 dependencies {
     compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.8.v20171121'
@@ -31,14 +36,23 @@ dependencies {
 
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
     compile group: 'com.google.inject.extensions', name: 'guice-servlet', version: '4.1.0'
+    compile group: 'com.google.guava', name: 'guava', version: '24.0-jre'
 
     compile group: 'org.webjars', name: 'swagger-ui', version: '3.9.3'
 
-    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
-
     compile group: 'javax.activation', name: 'activation', version: '1.1.1'
 
+    compile group: 'org.checkerframework', name: 'checker-qual', version: '2.3.2'
+
+    runtime group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+
+    testRuntime group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+
     testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    compileOnly group: 'org.checkerframework', name: 'checker', version: '2.3.2'
+    testCompileOnly group: 'org.checkerframework', name: 'checker', version: '2.3.2'
+    checkerFrameworkAnnotatedJDK group: 'org.checkerframework', name: 'jdk8', version: '2.3.2'
 
     swaggerCodegen 'io.swagger:swagger-codegen-cli:2.3.1'
 }
@@ -60,3 +74,16 @@ swaggerSources {
 
 compileJava.dependsOn swaggerSources.dummy.code
 sourceSets.main.java.srcDir "${swaggerSources.dummy.code.outputDir}/src/gen/java"
+
+allprojects {
+    tasks.withType(JavaCompile).all { JavaCompile compile ->
+        compile.doFirst {
+            compile.options.compilerArgs = [
+                    '-processor', 'org.checkerframework.checker.nullness.NullnessChecker',
+                    "-Xbootclasspath/p:${configurations.checkerFrameworkAnnotatedJDK.asPath}",
+            ]
+        }
+    }
+}
+
+mainClassName = "com.mracsko.example.rest.swagger.guice.jersey.Main"

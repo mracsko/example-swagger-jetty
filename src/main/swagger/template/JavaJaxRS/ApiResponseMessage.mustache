@@ -1,6 +1,7 @@
 package {{apiPackage}};
 
 import javax.xml.bind.annotation.XmlTransient;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @javax.xml.bind.annotation.XmlRootElement
 {{>generatedAnnotation}}
@@ -12,8 +13,8 @@ public class ApiResponseMessage {
     public static final int TOO_BUSY = 5;
 
     int code;
-    String type;
-    String message;
+    @Nullable String type;
+    @Nullable String message;
 
     public ApiResponseMessage(){}
 
@@ -21,22 +22,22 @@ public class ApiResponseMessage {
         this.code = code;
         switch(code){
         case ERROR:
-            setType("error");
+            type = "error";
             break;
         case WARNING:
-            setType("warning");
+            type = "warning";
             break;
         case INFO:
-            setType("info");
+            type = "info";
             break;
         case OK:
-            setType("ok");
+            type = "ok";
             break;
         case TOO_BUSY:
-            setType("too busy");
+            type = "too busy";
             break;
         default:
-            setType("unknown");
+            type = "unknown";
             break;
         }
         this.message = message;
@@ -51,6 +52,7 @@ public class ApiResponseMessage {
         this.code = code;
     }
 
+    @Nullable
     public String getType() {
         return type;
     }
@@ -59,6 +61,7 @@ public class ApiResponseMessage {
         this.type = type;
     }
 
+    @Nullable
     public String getMessage() {
         return message;
     }

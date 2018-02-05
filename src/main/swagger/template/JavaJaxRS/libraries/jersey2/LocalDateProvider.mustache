@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Provider
 public class LocalDateProvider implements ParamConverterProvider {
 
+    @SuppressWarnings("nullness")
     public <T> ParamConverter<T> getConverter(Class<T> clazz, Type type, Annotation[] annotations) {
         if (clazz.getName().equals(LocalDate.class.getName())) {
             return new ParamConverter<T>() {

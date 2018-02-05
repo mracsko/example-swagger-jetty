@@ -1,5 +1,6 @@
 package com.mracsko.example.rest.swagger.guice.jersey.module;
 
+import com.google.common.base.Verify;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.mracsko.example.rest.swagger.guice.jersey.Main;
@@ -54,36 +55,36 @@ public class ServerModule extends AbstractModule {
 
     servletContext.addServlet(jerseyServlet, servletMapping.getPath());
 
-    log.info("Added servlet with mapping: {}",servletMapping.getPath());
-    log.info("Created Servlet context with path: {}",servletContext.getContextPath());
+    log.info("Added servlet with mapping: {}", servletMapping.getPath());
+    log.info("Created Servlet context with path: {}", servletContext.getContextPath());
 
     return servletContext;
   }
 
   public ContextHandler createSwaggerUiContextHandler(final Path basePath) throws Exception {
     ResourceHandler resourceHandler = new ResourceHandler();
-    resourceHandler.setResourceBase(getClass().getClassLoader()
-            .getResource("META-INF/resources/webjars/swagger-ui/3.9.3")
-            .toURI().toString());
+    resourceHandler.setResourceBase(getUriStringFromClassLoaderResource("META-INF/resources/webjars/swagger-ui/3.9.3"));
     ContextHandler context = new ContextHandler();
     context.setContextPath(basePath.extend(new Path("/swagger-ui")).getPath());
     context.setHandler(resourceHandler);
-    log.info("Created Swagger UI context with path: {}",context.getContextPath());
+    log.info("Created Swagger UI context with path: {}", context.getContextPath());
     return context;
   }
 
   public ContextHandler createSwaggerIndexHtmlContextHandler(Path basePath) throws Exception {
     ResourceHandler resourceHandler = new ResourceHandler();
-    resourceHandler.setResourceBase(getClass().getClassLoader()
-            .getResource("com/mracsko/example/rest/swagger/jersey/html/dummy")
-            .toURI().toString());
+    resourceHandler.setResourceBase(getUriStringFromClassLoaderResource("com/mracsko/example/rest/swagger/jersey/html/dummy"));
     resourceHandler.setWelcomeFiles(new String[]{"index.html"});
     ContextHandler context = new ContextHandler();
     context.setContextPath(basePath.getPath());
     context.setHandler(resourceHandler);
-    log.info("Created Swagger HTML for API context with path: {}",context.getContextPath());
+    log.info("Created Swagger HTML for API context with path: {}", context.getContextPath());
     return context;
   }
 
+  private String getUriStringFromClassLoaderResource(String resourcePath) throws Exception {
+    return Verify.verifyNotNull(Verify.verifyNotNull(getClass().getClassLoader(), "Expected non-null classLoader")
+            .getResource(resourcePath), "Expected non-null url for resourcePath (%s)", "resourcePath").toURI().toString();
+  }
 
 }

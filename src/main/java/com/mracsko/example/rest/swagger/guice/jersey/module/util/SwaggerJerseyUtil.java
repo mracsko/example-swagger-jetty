@@ -1,10 +1,12 @@
 package com.mracsko.example.rest.swagger.guice.jersey.module.util;
 
+import com.google.common.base.Verify;
 import io.swagger.config.Scanner;
 import io.swagger.config.SwaggerConfig;
 import io.swagger.jaxrs.config.SwaggerContextService;
 import io.swagger.models.Info;
 import io.swagger.models.Swagger;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import java.util.Set;
@@ -27,14 +29,15 @@ public class SwaggerJerseyUtil {
             .withScanner(createScanner(resourceConfig))
             .initConfig().initScanner();
 
-    resourceConfig.packages(io.swagger.jaxrs.listing.ApiListingResource.class
-            .getPackage().getName());
+    resourceConfig.packages(Verify.verifyNotNull(io.swagger.jaxrs.listing.ApiListingResource.class
+            .getPackage()).getName());
   }
 
   private static Scanner createScanner(final ResourceConfig resourceConfig) {
     return new Scanner() {
       private boolean prettyPrint;
 
+      @SuppressWarnings("nullness")
       public Set<Class<?>> classes() {
         return resourceConfig.getInstances().stream()
                 .map(Object::getClass)
@@ -62,6 +65,7 @@ public class SwaggerJerseyUtil {
         return swagger;
       }
 
+      @SuppressWarnings("nullness")
       public String getFilterClass() {
         return null;
       }

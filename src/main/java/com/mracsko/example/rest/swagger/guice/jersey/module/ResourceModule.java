@@ -27,7 +27,6 @@ public class ResourceModule extends AbstractModule {
     resourceConfig.registerInstances(new JacksonJsonProvider());
     resourceConfig.registerInstances(new LocalDateProvider());
     resourceConfig.registerInstances(new OffsetDateTimeProvider());
-    resourceConfig.registerInstances(new RFC3339DateFormat());
     resourceConfig.registerInstances(dummyApi);
 
     SwaggerJerseyUtil.configureSwaggerForResourceConfig(resourceConfig, PATHS.getFullPath(), "Dummy example API", "1.0");

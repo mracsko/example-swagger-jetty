@@ -21,6 +21,7 @@ import javax.ws.rs.ext.Provider;
 @Produces({MediaType.APPLICATION_JSON})
 public class JacksonJsonProvider extends JacksonJaxbJsonProvider {
 
+    @SuppressWarnings("nullness")
     public JacksonJsonProvider() {
 
         ObjectMapper objectMapper = new ObjectMapper()
